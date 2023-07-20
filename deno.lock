@@ -1,0 +1,81 @@
+{
+  "version": "2",
+  "remote": {},
+  "npm": {
+    "specifiers": {
+      "@oakserver/oak": "@oakserver/oak@12.6.0",
+      "reflect-metadata": "reflect-metadata@0.1.13",
+      "tsyringe": "tsyringe@4.8.0"
+    },
+    "packages": {
+      "@deno/shim-crypto@0.3.1": {
+        "integrity": "sha512-ed4pNnfur6UbASEgF34gVxR9p7Mc3qF+Ygbmjiil8ws5IhNFhPDFy5vE5hQAUA9JmVsSxXPcVLM5Rf8LOZqQ5Q==",
+        "dependencies": {}
+      },
+      "@deno/shim-deno-test@0.4.0": {
+        "integrity": "sha512-oYWcD7CpERZy/TXMTM9Tgh1HD/POHlbY9WpzmAk+5H8DohcxG415Qws8yLGlim3EaKBT2v3lJv01x4G0BosnaQ==",
+        "dependencies": {}
+      },
+      "@deno/shim-deno@0.16.1": {
+        "integrity": "sha512-s9v0kzF5bm/o9TgdwvsraHx6QNllYrXXmKzgOG2lh4LFXnVMr2gpjK/c/ve6EflQn1MqImcWmVD8HAv5ahuuZQ==",
+        "dependencies": {
+          "@deno/shim-deno-test": "@deno/shim-deno-test@0.4.0",
+          "which": "which@2.0.2"
+        }
+      },
+      "@oakserver/oak@12.6.0": {
+        "integrity": "sha512-DhbRLm4AXxbKKZDa58UpdgJ6SYjNxZeBY/e0y0T2Hku2cQosEBvJAzCPfaFLXCosCNjoI6pbTdjQWoeduu1h8Q==",
+        "dependencies": {
+          "@deno/shim-crypto": "@deno/shim-crypto@0.3.1",
+          "@deno/shim-deno": "@deno/shim-deno@0.16.1",
+          "tslib": "tslib@2.3.1",
+          "undici": "undici@5.22.1"
+        }
+      },
+      "busboy@1.6.0": {
+        "integrity": "sha512-8SFQbg/0hQ9xy3UNTB0YEnsNBbWfhf7RtnzpL7TkBiTBRfrQ9Fxcnz7VJsleJpyp6rVLvXiuORqjlHi5q+PYuA==",
+        "dependencies": {
+          "streamsearch": "streamsearch@1.1.0"
+        }
+      },
+      "isexe@2.0.0": {
+        "integrity": "sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==",
+        "dependencies": {}
+      },
+      "reflect-metadata@0.1.13": {
+        "integrity": "sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==",
+        "dependencies": {}
+      },
+      "streamsearch@1.1.0": {
+        "integrity": "sha512-Mcc5wHehp9aXz1ax6bZUyY5afg9u2rv5cqQI3mRrYkGC8rW2hM02jWuwjtL++LS5qinSyhj2QfLyNsuc+VsExg==",
+        "dependencies": {}
+      },
+      "tslib@1.14.1": {
+        "integrity": "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==",
+        "dependencies": {}
+      },
+      "tslib@2.3.1": {
+        "integrity": "sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==",
+        "dependencies": {}
+      },
+      "tsyringe@4.8.0": {
+        "integrity": "sha512-YB1FG+axdxADa3ncEtRnQCFq/M0lALGLxSZeVNbTU8NqhOVc51nnv2CISTcvc1kyv6EGPtXVr0v6lWeDxiijOA==",
+        "dependencies": {
+          "tslib": "tslib@1.14.1"
+        }
+      },
+      "undici@5.22.1": {
+        "integrity": "sha512-Ji2IJhFXZY0x/0tVBXeQwgPlLWw13GVzpsWPQ3rV50IFMMof2I55PZZxtm4P6iNq+L5znYN9nSTAq0ZyE6lSJw==",
+        "dependencies": {
+          "busboy": "busboy@1.6.0"
+        }
+      },
+      "which@2.0.2": {
+        "integrity": "sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==",
+        "dependencies": {
+          "isexe": "isexe@2.0.0"
+        }
+      }
+    }
+  }
+}

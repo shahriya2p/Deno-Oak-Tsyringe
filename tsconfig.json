@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "allowJs": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
+      "inlineSourceMap": true,
+      "isolatedModules": true,
+      "jsx": "react",
+      "lib": ["ES6", "DOM"],
+      "module": "esnext",
+      "moduleDetection": "force",
+      "strict": true,
+      "target": "esnext",
+      "useDefineForClassFields": true
+    }
+  }
