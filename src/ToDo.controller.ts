@@ -1,4 +1,4 @@
-import { Router, autoInjectable, inject } from './deps.ts'
+import { Router, autoInjectable, container } from './deps.ts'
 import { ToDoService } from './ToDo.service.ts'
 
 // @autoInjectable()
@@ -7,8 +7,9 @@ export class TodoController {
     router: Router;
 
     constructor (
-        @inject(ToDoService) private todoService: ToDoService
+       private todoService: ToDoService
     ) {
+        this.todoService = container.resolve(ToDoService)
         this.router = new Router();
         this.routes();
     }
