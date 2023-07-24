@@ -5,17 +5,6 @@ type RouteData = {
   method: string;
 };
 
-export function route(method: string, path: string) {
-  return function (
-    target: any,
-    propertyKey: string,
-    descriptor: PropertyDescriptor
-  ) {
-    Reflect.defineMetadata("route", { method, path }, descriptor.value);
-    return descriptor;
-  };
-}
-
 
 export function router(basePath: string) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
@@ -61,4 +50,33 @@ export function router(basePath: string) {
     }
     Reflect.defineMetadata("router", router, constructor);
   }
+}
+
+export function GET(path: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    Reflect.defineMetadata("route", { method: "GET", path }, descriptor.value);
+    return descriptor;
+  };
+}
+
+export function POST(path: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    Reflect.defineMetadata("route", { method: "POST", path }, descriptor.value);
+    return descriptor;
+  };
+}
+
+
+export function PUT(path: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    Reflect.defineMetadata("route", { method: "PUT", path }, descriptor.value);
+    return descriptor;
+  };
+}
+
+export function DELETE(path: string) {
+  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    Reflect.defineMetadata("route", { method: "DELETE", path }, descriptor.value);
+    return descriptor;
+  };
 }
