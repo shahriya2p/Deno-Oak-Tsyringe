@@ -1,35 +1,27 @@
-import { autoInjectable, inject } from "./deps.ts";
+import { Context, autoInjectable, container } from "./deps.ts";
 import { ToDoRepository } from "./ToDoRepository.ts";
-import Todo from "./interfaces/Todos.ts"
+import { Todo } from "./interfaces/Todos.ts"
 
 @autoInjectable()
 export class ToDoService {
+    todoRepository = new ToDoRepository();
+    constructor() { }
 
-    constructor(
-      @inject(ToDoRepository) private todoRepository: ToDoRepository
-      ) { }
-
-      getAllTodos =  ({ response }: { response: any }) => {
+      getAllTodos =  ({ response }: { response: any }): Response => {
         response.status = 200;
         response.body = {
           success: true,
           data: this.todoRepository.todos,
         };
+        return response.body;
       }
     
-      createTodo = async (
-        { request, response }: { request: any; response: any },
+      createTodo = (
+        payload: any
       ) => {
-        const body = await request.body();
-        console.log('req', await body.value)
-        const value = await body.value
-        if (!request.hasBody) {
-          response.status = 400;
-          response.body = {
-            success: false,
-            message: "No data provided",
-          };
-          return;
+        const value = payload
+        if (!payload) {
+          return "No data provided";
         }
     
         const newTodo: Todo = {
@@ -39,73 +31,34 @@ export class ToDoService {
         };
         const data = [...this.todoRepository.todos, newTodo];
         this.todoRepository.todos = data;
-        response.body = {
-          success: true,
-          data,
-        };
+        return data;
       }
     
-      getTodoById = (
-        { params, response }: { params: { id: string }; response: any },
-      ) => {
+      getTodoById = (id: string): Todo | string => {
         const todo: Todo | undefined = this.todoRepository.todos.find((t) => {
-          return t.id === params.id;
+          return t.id === id;
         });
         if (!todo) {
-          response.status = 404;
-          response.body = {
-            success: false,
-            message: "No todo found",
-          };
-          return;
+          return "No To Do Found";
         }
-    
-        response.status = 200;
-        response.body = {
-          success: true,
-          data: todo,
-        };
+        return todo;
       }
-    
-      updateTodoById = async (
-        { params, request, response }: {
-          params: { id: string },
-          request: any,
-          response: any,
-        },
-      ) => {
-        const todo: Todo | undefined = this.todoRepository.todos.find((t) => t.id === params.id);
-        console.log(todo)
+
+      updateTodoById = (id: any, payload: any) => {
+        const todo: Todo | undefined = this.todoRepository.todos.find((t) => t.id === id);
         if (!todo) {
-          response.status = 404;
-          response.body = {
-            success: false,
-            message: "No todo found",
-          };
-          return;
+          return 'No Todo Found';
         }
-    
-        const body = await request.body();
-        const updatedData: { todo?: string; isCompleted?: boolean } = await body.value;
+        const updatedData: { todo?: string; isCompleted?: boolean } = payload;
         const newTodos = this.todoRepository.todos.map((t) => {
-          return t.id === params.id ? { ...t, ...updatedData } : t;
+          return t.id === id ? { ...t, ...updatedData } : t;
         });
-        response.status = 200;
-        response.body = {
-          success: true,
-          data: newTodos,
-        };
+
+        return newTodos;
       }
     
-      deleteTodoById = (
-        { params, response }: { params: { id: string }; response: any },
-      ) => {
-        const allTodos = this.todoRepository.todos.filter((t) => t.id !== params.id);
-    
-        response.status = 200;
-        response.body = {
-          success: true,
-          data: allTodos,
-        };
+      deleteTodoById = (id: string): Todo[] => {
+        const allTodos = this.todoRepository.todos.filter((t) => t.id !== id);
+        return allTodos;
       }
 }

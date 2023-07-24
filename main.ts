@@ -1,17 +1,12 @@
 import "npm:reflect-metadata"
-import { Application, container } from './src/deps.ts';
+import { Application} from './src/deps.ts';
 import { TodoController } from "./src/ToDo.controller.ts";
-
 const app = new Application();
 const port: number = 8000;
 
-// Register the dependencies with the container
-container.register<TodoController>("TodoController", {useClass: TodoController});
+const myRouter = Reflect.getMetadata("router", TodoController);
 
-// Resolve the controller instance from the container
-const todoController = container.resolve(TodoController);
-
-app.use(todoController.router.routes())
-app.use(todoController.router.allowedMethods());
+app.use(myRouter.routes());
+app.use(myRouter.allowedMethods());
 
 await app.listen({ port });

@@ -1,24 +1,40 @@
-import { Router, autoInjectable, container } from './deps.ts'
-import { ToDoService } from './ToDo.service.ts'
+import { autoInjectable, Context, container } from './deps.ts';
+import { ToDoService } from './ToDo.service.ts';
+import { router, route } from './router.ts';
 
-// @autoInjectable()
 @autoInjectable()
+@router("/todos")
 export class TodoController {
-    router: Router;
-
-    constructor (
-       private todoService: ToDoService
-    ) {
+    private todoService: ToDoService
+    constructor () {
         this.todoService = container.resolve(ToDoService)
-        this.router = new Router();
-        this.routes();
-    }
+      }
 
-    routes() {
-        this.router.get("/todos", this.todoService.getAllTodos)
-        .post("/todos", this.todoService.createTodo)
-        .get("/todos/:id", this.todoService.getTodoById)
-        .put("/todos/:id", this.todoService.updateTodoById)
-        .delete("/todos/:id", this.todoService.deleteTodoById);
-    }
+
+  @route("GET", "/") 
+  getAllTodos(ctx: Context) {
+    ctx.response.body = this.todoService.getAllTodos(ctx);
+    return ctx
+  }
+
+  @route("GET", "/:id") 
+  getTodoById(ctx: any) {
+    ctx.response.body = this.todoService.getTodoById(ctx.params.id);
+  }
+
+  @route("POST", "/")
+  createTodo(ctx: Context, payload: any) {
+    ctx.response.body = this.todoService.createTodo(payload);
+  }
+
+  @route("PUT", "/:id") 
+  updateTodoById(ctx: any, payload: any) {
+    console.log('put', payload)
+    ctx.response.body = this.todoService.updateTodoById(ctx.params.id, payload);
+  }
+
+  @route("DELETE", "/:id") 
+  deleteTodoById(ctx: any) {
+    ctx.response.body = this.todoService.deleteTodoById(ctx.params.id);
+  }
 }
