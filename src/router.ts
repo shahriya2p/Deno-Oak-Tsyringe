@@ -1,82 +1,55 @@
-import {  Router, Context } from "./deps.ts";
+import { Router, Context } from "./deps.ts";
 
-type RouteData = {
+type HttpMethod = "get" | "post" | "put" | "delete";
+type MethodDecorator = (
+  target: Object,
+  propertyKey: string | symbol,
+  descriptor: TypedPropertyDescriptor<any>
+) => TypedPropertyDescriptor<any> | void;
+export interface RouteType {
+  method: HttpMethod;
   path: string;
-  method: string;
-};
+}
 
-
-export function router(basePath: string) {
+export function Controller(baseRoute: string) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
-    const router = new Router({  prefix: basePath });
-    const methods = Object.getOwnPropertyNames(constructor.prototype);
-    for (const methodName of methods) {
-      const method = constructor.prototype[methodName];
-      if (typeof method === "function" && Reflect.hasMetadata("route", method)) {
-        const routeData = Reflect.getMetadata("route", method) as RouteData;
-        switch (routeData.method) {
-          case "GET":
-            router.get(routeData.path, async (ctx: Context) => {
-              const instance = new constructor();
-              await method.call(instance, ctx);
-            });
-            break;
-          case "POST":
-            router.post(routeData.path, async (ctx: Context) => {
-              const instance = new constructor();
-              // Read the request body as JSON and store it in the `payload` variable
-              const payload = await ctx.request.body({ type: "json" }).value;
-              await method.call(instance, ctx, payload);
-            });
-            break;
-          case "PUT":
-            router.put(routeData.path, async (ctx: Context) => {
-              const instance = new constructor();
-              // Read the request body as JSON and store it in the `payload` variable
-              const payload = await ctx.request.body({ type: "json" }).value;
-              await method.call(instance, ctx, payload);
-            });
-            break;
-          case "DELETE":
-            router.delete(routeData.path, async (ctx: Context) => {
-              const instance = new constructor();
-              await method.call(instance, ctx);
-            });
-            break;
-          default:
-            throw new Error(`Unsupported HTTP method: ${routeData.method}`);
-        }
+    const router = new Router<Context>();
+    const instance = new constructor();
+    const prototype = Object.getPrototypeOf(instance);
+
+    for (const propertyKey of Object.getOwnPropertyNames(prototype)) {
+      const route = Reflect.getMetadata("route", prototype, propertyKey);
+      if (route) {
+        const { method, path }: RouteType = route;
+        const handler = (instance[propertyKey] as Function).bind(instance);
+        router[method](baseRoute + path, handler);
       }
     }
     Reflect.defineMetadata("router", router, constructor);
-  }
-}
-
-export function GET(path: string) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", { method: "GET", path }, descriptor.value);
-    return descriptor;
+    constructor.prototype.router = router;
   };
 }
 
-export function POST(path: string) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", { method: "POST", path }, descriptor.value);
-    return descriptor;
+export function GET(path: string): MethodDecorator {
+  return function (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) {
+    Reflect.defineMetadata("route", { method: "get", path }, target, propertyKey);
   };
 }
 
-
-export function PUT(path: string) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", { method: "PUT", path }, descriptor.value);
-    return descriptor;
+export function POST(path: string): MethodDecorator {
+  return function (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) {
+    Reflect.defineMetadata("route", { method: "post", path }, target, propertyKey);
   };
 }
 
-export function DELETE(path: string) {
-  return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
-    Reflect.defineMetadata("route", { method: "DELETE", path }, descriptor.value);
-    return descriptor;
+export function PUT(path: string): MethodDecorator {
+  return function (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) {
+    Reflect.defineMetadata("route", { method: "put", path }, target, propertyKey);
+  };
+}
+
+export function DELETE(path: string): MethodDecorator {
+  return function (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) {
+    Reflect.defineMetadata("route", { method: "delete", path }, target, propertyKey);
   };
 }

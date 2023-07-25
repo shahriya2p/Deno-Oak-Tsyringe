@@ -1,4 +1,4 @@
-import Todo from "./interfaces/Todos.ts"
+import { Todo } from "./interfaces/Todos.ts"
 import { autoInjectable } from "./deps.ts";
 
 @autoInjectable()

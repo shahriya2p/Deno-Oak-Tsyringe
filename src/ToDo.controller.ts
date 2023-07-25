@@ -1,14 +1,15 @@
 import { autoInjectable, Context, container } from './deps.ts';
 import { ToDoService } from './ToDo.service.ts';
-import { router, GET,POST,PUT,DELETE} from './router.ts';
+import {  Controller, GET, POST,PUT, DELETE } from './router.ts';
 
 @autoInjectable()
-@router("/todos")
+@Controller("/todos")
 export class TodoController {
     private todoService: ToDoService
     constructor () {
         this.todoService = container.resolve(ToDoService)
       }
+
 
   @GET("/") 
   getAllTodos(ctx: Context) {
@@ -22,13 +23,17 @@ export class TodoController {
   }
 
   @POST("/")
-  createTodo(ctx: Context, payload: any) {
-    ctx.response.body = this.todoService.createTodo(payload);
+  async createTodo(ctx: Context) {
+    const body = await ctx.request.body();
+    const value = await body.value;
+    ctx.response.body = this.todoService.createTodo(value);
   }
 
   @PUT("/:id") 
-  updateTodoById(ctx: any, payload: any) {
-    ctx.response.body = this.todoService.updateTodoById(ctx.params.id, payload);
+  async updateTodoById(ctx: any) {
+    const body = await ctx.request.body();
+    const value = await body.value;
+    ctx.response.body = this.todoService.updateTodoById(ctx.params.id, value);
   }
 
   @DELETE("/:id") 

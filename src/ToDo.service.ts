@@ -19,7 +19,7 @@ export class ToDoService {
       createTodo = (
         payload: any
       ) => {
-        const value = payload
+        const value = JSON.parse(payload)
         if (!payload) {
           return "No data provided";
         }
@@ -49,11 +49,11 @@ export class ToDoService {
         if (!todo) {
           return 'No Todo Found';
         }
-        const updatedData: { todo?: string; isCompleted?: boolean } = payload;
+        const updatedData: { todo?: string; isCompleted?: boolean } = JSON.parse(payload);
         const newTodos = this.todoRepository.todos.map((t) => {
           return t.id === id ? { ...t, ...updatedData } : t;
         });
-
+        
         return newTodos;
       }
     
