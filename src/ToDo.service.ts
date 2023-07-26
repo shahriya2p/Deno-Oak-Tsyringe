@@ -7,13 +7,8 @@ export class ToDoService {
     todoRepository = new ToDoRepository();
     constructor() { }
 
-      getAllTodos =  ({ response }: { response: any }): Response => {
-        response.status = 200;
-        response.body = {
-          success: true,
-          data: this.todoRepository.todos,
-        };
-        return response.body;
+      getAllTodos =  (): Todo[] => {
+        return this.todoRepository.todos;
       }
     
       createTodo = (
@@ -21,7 +16,7 @@ export class ToDoService {
       ) => {
         const value = payload
         if (!payload) {
-          return "No data provided";
+          return "Something Went Wrong";
         }
     
         const newTodo: Todo = {
@@ -47,7 +42,7 @@ export class ToDoService {
       updateTodoById = (id: any, payload: any) => {
         const todo: Todo | undefined = this.todoRepository.todos.find((t) => t.id === id);
         if (!todo) {
-          return 'No Todo Found';
+          return 'Something Went Wrong';
         }
         const updatedData: { todo?: string; isCompleted?: boolean } = payload;
         const newTodos = this.todoRepository.todos.map((t) => {

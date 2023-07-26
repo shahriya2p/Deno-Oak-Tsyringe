@@ -13,7 +13,7 @@ export class TodoController {
 
   @GET("/") 
   getAllTodos(ctx: Context) {
-    ctx.response.body = this.todoService.getAllTodos(ctx);
+    ctx.response.body = this.todoService.getAllTodos();
     return ctx
   }
 
