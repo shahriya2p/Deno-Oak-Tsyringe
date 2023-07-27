@@ -14,14 +14,14 @@ export interface RouteType {
 export function Controller(baseRoute: string) {
   return function <T extends { new (...args: any[]): {} }>(constructor: T) {
     const router = new Router<Context>();
-    const instance = new constructor();
+    const instance = new constructor() as T & { [key: string]: any };
     const prototype = Object.getPrototypeOf(instance);
 
     for (const propertyKey of Object.getOwnPropertyNames(prototype)) {
       const route = Reflect.getMetadata("route", prototype, propertyKey);
       if (route) {
         const { method, path }: RouteType = route;
-        const handler = (instance[propertyKey] as Function).bind(instance);
+        const handler = (instance[propertyKey as keyof T] as Function).bind(instance);
         router[method](baseRoute + path, handler);
       }
     }
@@ -29,7 +29,6 @@ export function Controller(baseRoute: string) {
     constructor.prototype.router = router;
   };
 }
-
 export function GET(path: string): MethodDecorator {
   return function (target: Object, propertyKey: string | symbol, descriptor: TypedPropertyDescriptor<any>) {
     Reflect.defineMetadata("route", { method: "get", path }, target, propertyKey);
