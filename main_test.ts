@@ -1,11 +1,12 @@
 import "npm:reflect-metadata"
 import { testing,Context,Middleware} from "./src/deps.ts";
-import { ToDoService } from "./src/ToDo.service.ts";
 import { assertEquals } from "https://deno.land/std@0.195.0/testing/asserts.ts";
 
+const BASE_URL = "http://localhost:8000";
+
 const id="1";
-const createTodoPayload={id: '3',todo: 'walk do1',isCompleted: true};
-const updateTodoPayload={ todo: 'walk' }
+const createTodoPayload={todo: 'new todo'};
+const updateTodoPayload={ todo: 'updated todo' }
 
 
 const getAllTodosRes = [
@@ -18,41 +19,63 @@ const getTodoByIdRes = {id: '1',todo: 'walk dog',isCompleted: true,}
 const createdTodoRes = [
   { id: "1", todo: "walk dog", isCompleted: true },
   { id: "2", todo: "eat food", isCompleted: false },
-  { id: "3", todo: "walk do1", isCompleted: false }
+  { id: "3", todo: "new todo", isCompleted: false }
 ]
 
 const updateTodoByIdRes = [
-  { id: "1", todo: "walk", isCompleted: true },
+  { id: "1", todo: "updated todo", isCompleted: true },
   {id: "2",todo: "eat food",isCompleted: false},
+  { id: "3", todo: "new todo", isCompleted: false }
 ]
 
 const deleteTodoByIdRes =[
   {id: "2",todo: "eat food",isCompleted: false},
+  { id: "3", todo: "new todo", isCompleted: false }
 ]
 
 const mw: Middleware = async (ctx: Context, next) => {
-  const todoService=new ToDoService();
   switch (ctx.request.url.pathname) {
-    case "/getAllTodos":
-      ctx.response.body = todoService.getAllTodos();
+    case "/getAllTodos": {
+      const allTodos = await fetch(`${BASE_URL}/todos/`);
+      ctx.response.body = JSON.parse(await allTodos.text()); 
       break;
-    case "/getTodoById":
-      ctx.response.body = todoService.getTodoById(id);
+    }
+
+    case "/getTodoById": {
+      const todosById = await fetch(`${BASE_URL}/todos/${id}`);
+      ctx.response.body = JSON.parse(await todosById.text());  
       break;
-    case "/createTodo":
-      ctx.response.body = todoService.createTodo(createTodoPayload);
+    }
+
+    case "/createTodo": {
+      const createTodo = await fetch(`${BASE_URL}/todos/`,{method: "POST",headers: {
+        "Content-Type": "application/json",
+      }, body:JSON.stringify(createTodoPayload)});
+      ctx.response.body = JSON.parse(await createTodo.text());
       break;
-    case "/updateTodoById":
-      ctx.response.body = todoService.updateTodoById(id, updateTodoPayload);
+    }
+
+    case "/updateTodoById": {
+      const updateTodoById = await fetch(`${BASE_URL}/todos/${id}`,{method: "PUT",headers: {
+        "Content-Type": "application/json",
+      }, body:JSON.stringify(updateTodoPayload)});
+      ctx.response.body = JSON.parse(await updateTodoById.text());
       break;
-    case "/deleteTodoById":
-      ctx.response.body = todoService.deleteTodoById(id);
+    }
+
+    case "/deleteTodoById": {
+      const deleteTodoById = await fetch(`${BASE_URL}/todos/${id}`,{method: "DELETE"});
+      ctx.response.body = JSON.parse(await deleteTodoById.text());
       break;
+    }
+
     default:
       ctx.response.body = "path not found"
     }
     await next();
 };
+
+
 
 Deno.test({
   name: "Get All Todos",
